@@ -1,5 +1,3 @@
-/** @type {import('p5')} */
-
 function setup() {
   createCanvas(800, 800);
   noLoop();
