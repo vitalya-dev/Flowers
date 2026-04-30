@@ -11,29 +11,53 @@ function draw() {
 }
 
 function drawPlants() {
+    // Размер одной ячейки (блока) растения
     let cellSize = 40;
+    // Базовая линия (земля), откуда растут цветы
     let startY = height - 150;
 
+    // Проходим по горизонтали холста
     for (let x = 120; x < width - 100; x += 80) {
+        // Случайная высота растения: от 5 до 12 ячеек
         let plantHeight = floor(random(5, 13));
 
+        // Цикл постройки растения снизу вверх
         for (let i = 0; i < plantHeight; i++) {
             let currentY = startY - i * cellSize;
 
+            // ВЕРХУШКА: если это самая последняя ячейка, всегда рисуем цветок
             if (i === plantHeight - 1) {
-                // Выбираем случайный тип цветка (от 0 до 2)
                 let flowerType = floor(random(3));
                 drawFlower(x, currentY, cellSize, flowerType);
-            } else {
-                // Рисуем стебель
+            }
+            // ОСНОВА И ЛИСТЬЯ: для всех остальных ячеек
+            else {
+                // Обязательно рисуем стебель
                 let stemType = floor(random(6));
                 drawStem(x, currentY, cellSize, stemType);
 
-                // Логика листьев: не на самой нижней ячейке и с вероятностью 60%
-                if (i > 0 && random() > 0.4) {
-                    let leafType = floor(random(8));
-                    let isLeft = random() > 0.5;
-                    drawLeaf(x, currentY, cellSize, leafType, isLeft);
+                // Логика умного распределения листьев
+                let leafProbability = 0;
+
+                // В самом низу (i === 0) листья не растут, поэтому проверяем только ячейки выше
+                if (i > 0) {
+                    // Вычисляем, где мы находимся (от 0 до 1, где 0 - низ, 1 - верхушка)
+                    let normalizedPos = i / (plantHeight - 2);
+
+                    // Если мы находимся в центральной части стебля
+                    if (normalizedPos >= 0.3 && normalizedPos <= 0.7) {
+                        leafProbability = 0.7; // 70% шанс на лист
+                    } else {
+                        // Если мы ближе к низу или к самому цветку
+                        leafProbability = 0.3; // 30% шанс на лист
+                    }
+
+                    // Бросаем виртуальный кубик от 0 до 1. Если выпало меньше нашей вероятности — рисуем!
+                    if (random() < leafProbability) {
+                        let leafType = floor(random(8));
+                        let isLeft = random() > 0.5; // Случайно выбираем сторону (лево/право)
+                        drawLeaf(x, currentY, cellSize, leafType, isLeft);
+                    }
                 }
             }
         }
