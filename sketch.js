@@ -71,6 +71,10 @@ function drawFlower(x, y, size, type) {
     stroke(0);
     strokeWeight(2);
 
+    // ДОБАВЛЕНО: Рисуем соединительный стебель, чтобы закрыть разрыв
+    // Он идет от центра цветка вниз до границы ячейки
+    line(0, 0, 0, size / 2);
+
     // Создаем палитру для цветов
     let colorPink = color(255, 100, 150);
     let colorPurple = color(150, 50, 250);
