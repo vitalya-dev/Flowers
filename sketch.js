@@ -26,12 +26,83 @@ function drawPlants() {
                 noStroke();
                 circle(x, currentY, cellSize / 2);
             } else {
-                // Выбираем случайный тип стебля от 0 до 5 и рисуем его
+                // Рисуем стебель
                 let stemType = floor(random(6));
                 drawStem(x, currentY, cellSize, stemType);
+
+                // Логика листьев: не на самой нижней ячейке и с вероятностью 60%
+                if (i > 0 && random() > 0.4) {
+                    let leafType = floor(random(8)); // 8 типов листьев
+                    let isLeft = random() > 0.5; // 50% шанс расти влево или вправо
+                    drawLeaf(x, currentY, cellSize, leafType, isLeft);
+                }
             }
         }
     }
+}
+
+function drawLeaf(x, y, size, type, isLeft) {
+    push(); // Сохраняем текущие настройки холста
+    translate(x, y); // Перемещаем точку отсчета координат в центр ячейки
+
+    // Если лист должен быть слева, отзеркаливаем холст по горизонтали
+    if (isLeft) {
+        scale(-1, 1);
+    }
+
+    noStroke();
+
+    // Палитра для листьев (зеленые, красные, желтые оттенки)
+    let leafColors = [
+        color(100, 200, 50), // Светло-зеленый
+        color(30, 120, 50), // Темно-зеленый
+        color(220, 80, 60), // Красно-оранжевый
+        color(200, 255, 50), // Салатовый
+    ];
+    fill(random(leafColors));
+
+    let offset = 2; // Небольшой отступ от центра стебля
+
+    // 8 различных видов листьев
+    if (type === 0) {
+        // 0: Острый изогнутый листик
+        beginShape();
+        vertex(offset, 0);
+        bezierVertex(offset + 10, -15, offset + 25, -5, offset + 30, -10);
+        bezierVertex(offset + 20, 5, offset + 10, 10, offset, 0);
+        endShape();
+    } else if (type === 1) {
+        // 1: Две точки
+        circle(offset + 8, -5, 6);
+        circle(offset + 16, -10, 6);
+    } else if (type === 2) {
+        // 2: Полукруг прижатый к стеблю
+        arc(offset, 0, 20, 20, -PI / 2, PI / 2);
+    } else if (type === 3) {
+        // 3: Геометрический треугольник
+        triangle(offset, -5, offset + 20, -15, offset, 15);
+    } else if (type === 4) {
+        // 4: Три точки по вертикали
+        circle(offset + 6, -10, 5);
+        circle(offset + 6, 0, 5);
+        circle(offset + 6, 10, 5);
+    } else if (type === 5) {
+        // 5: Ромб с "глазиком" внутри
+        quad(offset, 0, offset + 15, -10, offset + 30, 0, offset + 15, 10);
+        fill(0);
+        circle(offset + 15, 0, 4);
+    } else if (type === 6) {
+        // 6: Вытянутый овал
+        ellipse(offset + 15, -5, 25, 8);
+    } else if (type === 7) {
+        // 7: Маленький квадратный листик под углом
+        translate(offset + 12, 0);
+        rotate(PI / 4);
+        rectMode(CENTER);
+        rect(0, 0, 10, 10);
+    }
+
+    pop(); // Возвращаем настройки холста в исходное состояние
 }
 
 function drawStem(x, y, size, type) {
