@@ -21,10 +21,9 @@ function drawPlants() {
             let currentY = startY - i * cellSize;
 
             if (i === plantHeight - 1) {
-                // Здесь будет цветок (пока оставляем красный кружок)
-                fill(255, 100, 100);
-                noStroke();
-                circle(x, currentY, cellSize / 2);
+                // Выбираем случайный тип цветка (от 0 до 2)
+                let flowerType = floor(random(3));
+                drawFlower(x, currentY, cellSize, flowerType);
             } else {
                 // Рисуем стебель
                 let stemType = floor(random(6));
@@ -32,13 +31,93 @@ function drawPlants() {
 
                 // Логика листьев: не на самой нижней ячейке и с вероятностью 60%
                 if (i > 0 && random() > 0.4) {
-                    let leafType = floor(random(8)); // 8 типов листьев
-                    let isLeft = random() > 0.5; // 50% шанс расти влево или вправо
+                    let leafType = floor(random(8));
+                    let isLeft = random() > 0.5;
                     drawLeaf(x, currentY, cellSize, leafType, isLeft);
                 }
             }
         }
     }
+}
+
+function drawFlower(x, y, size, type) {
+    push();
+    translate(x, y); // Смещаем координаты в центр верхней ячейки
+
+    stroke(0);
+    strokeWeight(2);
+
+    // Создаем палитру для цветов
+    let colorPink = color(255, 100, 150);
+    let colorPurple = color(150, 50, 250);
+    let colorYellow = color(255, 200, 50);
+    let colorMint = color(150, 255, 150);
+
+    if (type === 0) {
+        // Тип 0: Похож на тюльпан (полукруг снизу, два лепестка сверху)
+        fill(colorPurple);
+        arc(0, 0, size, size, 0, PI); // Нижняя чаша
+
+        fill(colorPink);
+        triangle(-size / 2, 0, -size / 4, -size / 2, 0, 0); // Левый лепесток
+        triangle(0, 0, size / 4, -size / 2, size / 2, 0); // Правый лепесток
+
+        // Черные точки-глазки внутри
+        fill(0);
+        circle(-size / 4, size / 4, 6);
+        circle(size / 4, size / 4, 6);
+
+        // Парящая точка сверху
+        circle(0, -size / 2 - 10, 6);
+        line(0, -size / 2, 0, -size / 2 - 5);
+    } else if (type === 1) {
+        // Тип 1: Геометрический квадрат
+        fill(colorPink);
+        rectMode(CENTER);
+        rect(0, -size / 4, size, size);
+
+        fill(colorYellow);
+        arc(-size / 2, -size / 4, size, size, -PI / 2, PI / 2); // Полукруг внутри квадрата
+
+        fill(colorPurple);
+        triangle(
+            0,
+            -size / 4,
+            size / 2,
+            -size / 4 - size / 2,
+            size / 2,
+            -size / 4 + size / 2,
+        );
+
+        // Парящие точки сверху
+        fill(0);
+        circle(0, -size / 4 - size / 2 - 8, 4);
+        fill(255, 100, 100);
+        circle(-10, -size / 4 - size / 2 - 5, 4);
+        circle(10, -size / 4 - size / 2 - 5, 4);
+    } else if (type === 2) {
+        // Тип 2: Строгий прямоугольник с дугой
+        fill(colorMint);
+        rectMode(CENTER);
+        rect(0, 0, size, size * 0.8);
+
+        fill(colorMint);
+        arc(0, -size * 0.4, size, size / 2, -PI, 0); // Крышечка
+
+        // Линии и точки
+        line(-size / 2 + 5, 0, size / 2 - 5, 0);
+        fill(0);
+        circle(-size / 4, -10, 5);
+        circle(size / 4, -10, 5);
+
+        // Парящие точки
+        fill(30, 120, 50);
+        circle(0, -size * 0.4 - 10, 5);
+        circle(-10, -size * 0.4 - 5, 3);
+        circle(10, -size * 0.4 - 5, 3);
+    }
+
+    pop();
 }
 
 function drawLeaf(x, y, size, type, isLeft) {
